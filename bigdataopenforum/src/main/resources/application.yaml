@@ -1,0 +1,9 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-forum.html
+server:
+  port: 9090
+  error:
+    include-message: always
+
+spring.jpa.hibernate.ddl-auto: update

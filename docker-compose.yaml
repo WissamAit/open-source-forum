@@ -1,0 +1,133 @@
+version: '3.9'
+
+services:
+#---------------------------------------------------------------------------------#
+#       Create container for Backend side
+#---------------------------------------------------------------------------------#
+  backend:
+    build: ./bigdataopenforum
+    container_name: forum-backend
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_started
+      postgresdb:
+        condition: service_started
+    ports:
+      - 9090:9090 # Forward the exposed port 9090 on the container to port 9090 on the host machine MY-HOST:CONTAINER-PORT
+    volumes:
+      - .m2:/root/.m2
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.9
+
+#---------------------------------------------------------------------------------#
+#       Create container for Backend side
+#---------------------------------------------------------------------------------#
+  frontend:
+    build: ./big-data-open-forum-ui
+    container_name: forum-frontend
+    restart: always
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 3000:80
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.10
+  #---------------------------------------------------------------------------------#
+  #       Create mongo database and the UI client for mongodb
+  #---------------------------------------------------------------------------------#
+  mongodb:
+    container_name: mongo_container
+    image: mongo:5.0.4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=wissace
+      - MONGO_INITDB_ROOT_PASSWORD=wissace2022
+      - MONGO_INITDB_DATABASE=forum
+    restart: unless-stopped # Similar to always, except that when the container is stopped (manually or otherwise), it is not restarted even after Docker daemon restarts.
+    ports:
+      - 27017:27017
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.8
+    volumes:
+      - mongodb-data:/data/db # persist data even if container shuts down
+  mongo-express:
+    container_name: expressmongo_container
+    image: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    ports:
+      - 8077:8081
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.7
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=wissace
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=wissace2022
+      - ME_CONFIG_BASICAUTH_USERNAME=wissace
+      - ME_CONFIG_BASICAUTH_PASSWORD=wissace2022
+
+  #---------------------------------------------------------------------------------#
+  #       Create postgresql database and the UI client for postgres
+  #---------------------------------------------------------------------------------#
+  postgresdb:
+    container_name: postgres_container
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=wissace
+      - POSTGRES_PASSWORD=wissace2022
+      - POSTGRES_DB=forum
+    restart: unless-stopped
+    ports:
+      - 5444:5432
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.5
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-wissace@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-wissace2022}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    depends_on:
+      - postgresdb
+    volumes:
+      - pgadmin:/var/lib/pgadmin # persist data even if container shuts down
+    ports:
+      - "${PGADMIN_PORT:-5555}:80"
+    networks:
+      furom-network:
+        ipv4_address: 10.5.0.6
+    restart: unless-stopped
+
+#---------------------------------------------------------------------------------#
+#                     CONTAINER NETWORK INTERFACE & VOLUMES
+#---------------------------------------------------------------------------------#
+
+# Create my own bridge custom network
+networks:
+  furom-network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/27 # Host Address Range: 10.5.0.1  -  10.5.0.30
+         gateway: 10.5.0.1
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
+  pgadmin:
+  mongodb-data:

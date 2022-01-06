@@ -1,0 +1,13 @@
+spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+spring.datasource.url: jdbc:postgresql://localhost:5444/forum?currentSchema=public
+spring.datasource.username: wissace
+spring.datasource.password: wissace2022
+spring.datasource.driver-class-name: org.postgresql.Driver
+
+spring.data.mongodb.authentication-database: admin
+spring.data.mongodb.host: localhost
+spring.data.mongodb.port: 27017
+spring.data.mongodb.database: admin
+spring.data.mongodb.username: wissace
+spring.data.mongodb.password: wissace2022
+spring.data.mongodb.auto-index-creation: true
