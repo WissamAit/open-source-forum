@@ -1,6 +1,7 @@
 ## Open source FORUM
 
 ### What is Open Source Forum ?
+
 The goal of this project is to create an open source forum which is a simple web application that allows knowledge sharing (for example in big data field)
 
 To access the forum, just choose a useraname and YOUHOUU :) ... you're free to publish what you want.
@@ -8,7 +9,6 @@ To access the forum, just choose a useraname and YOUHOUU :) ... you're free to p
 A user can post articles with hashtags, like, comment as well as delete articles
 
 I used the following technos: ReactJS, Java 11, Spring Boot, PostgreSQL, MongoDB and Docker for the containerization
-
 
 ### Containerization using Docker
 
@@ -23,10 +23,9 @@ Below is the architecture of containerization and the configuration of **docker-
 
 [<img src="./images/docker.jpeg"/>](docker.jpeg)
 
-
 ### App architecture
 
-Below is the architecture of the application. 
+Below is the architecture of the application.
 
 I used ReactJS for the FRONTEND and JAVA 11 with Spring Boot for the backend. I implemented API RESTFUL. I also used for the database part PostgreSQL and mongo DB.
  I choosed two different  databases (relational and non-relational) in order to test the persistence of data and how they are configured with docker.
