@@ -33,3 +33,10 @@ I used ReactJS for the FRONTEND and JAVA 11 with Spring Boot for the backend. I 
  I used Hibernate which is an  ORM or object–relational mapping tool for the Java programming language. It provides a framework for mapping an object-oriented domain model to a relational database.
 
 [<img src="./images/arch.jpeg"/>](arch.jpeg)
+
+### How to run the project ?
+
+In the directory where the file ***docker-compose.yaml*** is located, run the command line ***docker-compose up***
+Then, in your browser, tap  <http://localhost:3000/>.
+
+To stop all the containers and remove them run ***docker-compose down***
